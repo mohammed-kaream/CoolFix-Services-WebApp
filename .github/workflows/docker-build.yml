@@ -1,0 +1,57 @@
+name: Docker Build & Smoke Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  docker:
+    name: Build image and verify it runs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: coolfix-services-webapp:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Start container (standalone, SQLite)
+        run: docker run -d --name coolfix-ci -p 8000:80 coolfix-services-webapp:ci
+
+      - name: Wait for the container to become healthy
+        run: |
+          for i in $(seq 1 30); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' coolfix-ci)
+            echo "Attempt $i: $status"
+            [ "$status" = "healthy" ] && exit 0
+            sleep 5
+          done
+          echo "Container did not become healthy"
+          docker logs coolfix-ci
+          exit 1
+
+      - name: Smoke test - health endpoint
+        run: curl --fail --silent http://localhost:8000/health | tee /dev/stderr | grep '"status":"ok"'
+
+      - name: Smoke test - login page renders
+        run: curl --fail --silent --output /dev/null --write-out "HTTP %{http_code}\n" http://localhost:8000/login
+
+      - name: Show image size
+        run: docker images coolfix-services-webapp:ci
+
+      - name: Container logs (on failure)
+        if: failure()
+        run: docker logs coolfix-ci
