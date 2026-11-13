@@ -1,0 +1,42 @@
+# Version control & CI
+.git
+.github
+.gitattributes
+
+# Dependencies are installed inside the image
+vendor
+node_modules
+
+# Secrets / local environment
+.env
+.env.*
+!.env.example
+
+# Build output & runtime files (recreated in the container)
+public/build
+public/hot
+public/storage
+bootstrap/cache/*.php
+storage/logs/*
+storage/debugbar/*
+storage/pail
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/private/*
+storage/app/public/*
+storage/app/.app_key
+database/*.sqlite
+
+# Docker / docs / editor files not needed at runtime
+Dockerfile
+docker-compose*.yml
+.dockerignore
+docs
+Makefile
+scripts
+*.md
+.vscode
+.idea
+.phpunit.cache
+.phpunit.result.cache
