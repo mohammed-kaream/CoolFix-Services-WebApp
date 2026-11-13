@@ -5,12 +5,35 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
+        then: function () {
+            // Health check for Docker HEALTHCHECK and CI.
+            // Registered outside the "web" group: no session, cookies or CSRF needed.
+            Route::get('/health', function () {
+                try {
+                    DB::connection()->getPdo();
+                    $database = 'ok';
+                } catch (\Throwable $e) {
+                    $database = 'unavailable';
+                }
+
+                $healthy = $database === 'ok';
+
+                return response()->json([
+                    'status'   => $healthy ? 'ok' : 'degraded',
+                    'app'      => config('app.name'),
+                    'database' => $database,
+                    'time'     => now()->toIso8601String(),
+                ], $healthy ? 200 : 503);
+            })->name('health');
+        },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');

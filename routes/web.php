@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Gate;
 // 1. المسارات العامة (مفتوحة للزوار والضيوف بشكل طبيعي)
 // =========================================================================
 
-Route::get('/index', [CoolController::class, 'home'])->name('index');
+Route::get('/index', [MainPageController::class, 'home'])->name('index');
 Route::get('/about', [CoolController::class, 'about'])->name('about');
 Route::get('/services', [CoolController::class, 'services'])->name('services');
 Route::get('/pricing', [CoolController::class, 'pricing'])->name('pricing');
@@ -103,28 +103,3 @@ Route::get('/lang/{locale}', function (string $locale) {
 
 // مسار الدخول كضيف الزائر المستقل
 Route::get('/login/guest', [\App\Http\Controllers\CoolController::class, 'loginAsGuest'])->name('login.guest');
-
-// =========================================================================
-// 6. Health check endpoint (used by Docker HEALTHCHECK and CI)
-// =========================================================================
-Route::get('/health', function () {
-    try {
-        \Illuminate\Support\Facades\DB::connection()->getPdo();
-        $database = 'ok';
-    } catch (\Throwable $e) {
-        $database = 'unavailable';
-    }
-
-    $healthy = $database === 'ok';
-
-    return response()->json([
-        'status'   => $healthy ? 'ok' : 'degraded',
-        'app'      => config('app.name'),
-        'database' => $database,
-        'time'     => now()->toIso8601String(),
-    ], $healthy ? 200 : 503);
-})->withoutMiddleware([
-    \Illuminate\Session\Middleware\StartSession::class,
-    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-    \App\Http\Middleware\CheckIfBlocked::class,
-])->name('health');
