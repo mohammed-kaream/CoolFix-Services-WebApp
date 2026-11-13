@@ -1,0 +1,55 @@
+# CoolFix Services WebApp - full stack (Laravel app + MySQL)
+# Usage:  docker compose up -d --build   ->  http://localhost:8000
+name: coolfix
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: coolfix-services-webapp:latest
+    container_name: coolfix-app
+    ports:
+      - "${APP_PORT:-8000}:80"
+    environment:
+      APP_NAME: CoolFix
+      APP_ENV: local
+      APP_DEBUG: "false"
+      APP_URL: http://localhost:${APP_PORT:-8000}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: coolfix
+      DB_USERNAME: coolfix
+      DB_PASSWORD: coolfix_secret
+      SEED_DATABASE: "true"
+      # Optional: enables the AI FAQ search (leave empty to disable)
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    volumes:
+      - app_storage:/var/www/html/storage/app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    container_name: coolfix-db
+    environment:
+      MYSQL_DATABASE: coolfix
+      MYSQL_USER: coolfix
+      MYSQL_PASSWORD: coolfix_secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot_secret"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  app_storage:
