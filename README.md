@@ -193,7 +193,7 @@ See [`docs/notes.md`](docs/notes.md) for the main Docker problem faced during th
 
 ## Author & Attribution
 
-Developed by **Mohammed Kohail** ([@mohammed-kaream](https://github.com/mohammed-kaream)) as an original project
+Developed by **Mohammed Kareem Kohail** ([@mohammed-kaream](https://github.com/mohammed-kaream)) as an original project
 and containerised for *OS Lab – Assignment #2 (Docker & GitHub)*.
 Built on the open-source [Laravel](https://laravel.com) framework (MIT) with Laravel Breeze for authentication.
 
