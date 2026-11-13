@@ -1,0 +1,660 @@
+/* ==========================================================================
+   COOLFIX — Auth Suite (Premium Redesign)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --teal: #013e37;
+  --teal-light: #0a5a4f;
+  --cream: #ffefb3;
+  --cream-soft: #fff8e6;
+  --ink: #0f2420;
+  --muted: #6b7a77;
+  --border: #e6e2d6;
+  --danger: #d64545;
+  --shadow-sm: 0 2px 8px rgba(1, 62, 55, 0.06);
+  --shadow-md: 0 12px 32px rgba(1, 62, 55, 0.10);
+  --shadow-lg: 0 24px 60px rgba(1, 62, 55, 0.16);
+  --radius: 14px;
+  --radius-lg: 22px;
+}
+
+::selection{
+  background-color: var(--cream);
+
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Lexend', Arial, sans-serif;
+  background: var(--cream-soft);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Shell: split screen                                                    */
+/* ---------------------------------------------------------------------- */
+
+.container {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 46% 54%;
+  perspective: 1800px;
+}
+
+.container.swapped {
+  grid-template-columns: 54% 46%;
+}
+
+.brand-panel,
+.form-panel {
+  transition: transform 0.16s cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
+}
+
+.brand-panel>*,
+.form-panel>* {
+  transition: opacity 0.1s ease;
+}
+
+.container.swap-anim .brand-panel>*,
+.container.swap-anim .form-panel>* {
+  opacity: 0;
+}
+
+/* Forward: Sign In -> Forgot Password (brand panel travels right, form panel travels left) */
+.container.swap-anim .brand-panel {
+  transform: translateX(60%) rotateY(-55deg);
+}
+
+.container.swap-anim .form-panel {
+  transform: translateX(-46%) rotateY(55deg);
+}
+
+/* Reverse: Forgot Password -> Sign In (panels start pre-swapped, so travel direction flips) */
+.container.swapped.swap-anim .brand-panel {
+  transform: translateX(-60%) rotateY(55deg);
+}
+
+.container.swapped.swap-anim .form-panel {
+  transform: translateX(46%) rotateY(-55deg);
+}
+
+/* Entrance: page loads mid-spin and settles into place on its own (no JS
+   required — this can never get stuck if a script fails to run). */
+@keyframes enterBrandPanel {
+  from {
+    transform: translateX(-60%) rotateY(55deg);
+  }
+
+  to {
+    transform: translateX(0) rotateY(0deg);
+  }
+}
+
+@keyframes enterFormPanel {
+  from {
+    transform: translateX(46%) rotateY(-55deg);
+  }
+
+  to {
+    transform: translateX(0) rotateY(0deg);
+  }
+}
+
+@keyframes enterBrandPanelSwapped {
+  from {
+    transform: translateX(60%) rotateY(-55deg);
+  }
+
+  to {
+    transform: translateX(0) rotateY(0deg);
+  }
+}
+
+@keyframes enterFormPanelSwapped {
+  from {
+    transform: translateX(-46%) rotateY(55deg);
+  }
+
+  to {
+    transform: translateX(0) rotateY(0deg);
+  }
+}
+
+@keyframes enterFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.container.swap-enter .brand-panel {
+  animation: enterBrandPanel 0.2s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.container.swap-enter .form-panel {
+  animation: enterFormPanel 0.2s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.container.swapped.swap-enter .brand-panel {
+  animation: enterBrandPanelSwapped 0.2s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.container.swapped.swap-enter .form-panel {
+  animation: enterFormPanelSwapped 0.2s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.container.swap-enter .brand-panel>*,
+.container.swap-enter .form-panel>* {
+  animation: enterFade 0.15s ease 0.04s both;
+}
+
+/* Brand / illustration panel */
+.brand-panel {
+  position: relative;
+  background: linear-gradient(160deg, var(--teal) 0%, #012e29 100%);
+  color: #fff;
+  padding: 48px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.brand-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 239, 179, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(255, 239, 179, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.brand-logo img {
+  height: 34px;
+  width: auto;
+  position: relative;
+  z-index: 2;
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+}
+
+.brand-illustration {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  margin: 20px 0;
+}
+
+.brand-illustration img {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+}
+
+.brand-copy {
+  position: relative;
+  z-index: 2;
+}
+
+.brand-copy h1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 14px;
+  max-width: 420px;
+}
+
+.brand-copy p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 380px;
+  margin: 0 0 22px;
+}
+
+.brand-trust {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.brand-trust span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.brand-trust i {
+  color: var(--cream);
+  font-size: 13px;
+}
+
+/* Form panel */
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  background: #ffffff;
+}
+
+.hheroo {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 65px;
+  border: 3px outset #012e29;
+  border-radius: 50px;
+  /* box-shadow: 3px 4px 6px #012e29; */
+  box-shadow: 0 2px 15px #012e29;
+
+}
+
+.hheroo .img.w-40 {
+  display: none;
+  /* logo lives in the brand panel now */
+}
+
+.login {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.login h2,
+.login .sin {
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--teal);
+  margin: 0 0 8px;
+  letter-spacing: -0.2px;
+}
+
+.login p,
+.login .papr {
+  font-size: 14.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Form fields                                                            */
+/* ---------------------------------------------------------------------- */
+
+.form {
+  width: 100%;
+}
+
+.f {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.lab-inp {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.lab-inp label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal);
+  margin-top: 16px;
+}
+
+.lab-inp label:first-child {
+  margin-top: 0;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--ink);
+  background: #fbfaf6;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.field-relative input[type="password"] {
+  padding-right: 44px;
+}
+
+input::placeholder {
+  color: #a8a39a;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="password"]:focus {
+  border-color: var(--teal);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(1, 62, 55, 0.08);
+}
+
+/* password field wrapper (keeps eye icon aligned to the password input itself) */
+.field-relative {
+  position: relative;
+}
+
+.icon-eye-slash,
+.icon-eye-open,
+.icon-eye-slashh,
+.icon-eye-openn {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9a958a;
+  cursor: pointer;
+  font-size: 15px;
+  transition: color .15s ease;
+}
+
+.icon-eye-slash:hover,
+.icon-eye-open:hover,
+.icon-eye-slashh:hover,
+.icon-eye-openn:hover {
+  color: var(--teal);
+}
+
+.icon-eye-open,
+.icon-eye-openn {
+  display: none;
+}
+
+/* forgot password row */
+.forget {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.forget label {
+  margin: 0;
+}
+
+.forget a {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal);
+  border-bottom: 1.5px solid transparent;
+  transition: border-color .15s ease;
+}
+
+.forget a:hover {
+  border-color: var(--teal);
+}
+
+/* checkbox row */
+.checkboox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.checkboox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--teal);
+}
+
+.checkboox label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Buttons                                                                */
+/* ---------------------------------------------------------------------- */
+
+.btn-cr {
+  width: 100%;
+  margin-top: 26px;
+}
+
+.btn,
+.btn-forget {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: var(--teal);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+  transition: background .18s ease, transform .12s ease, box-shadow .18s ease;
+}
+
+.btn:hover,
+.btn-forget:hover {
+  background: var(--teal-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn:active,
+.btn-forget:active {
+  transform: translateY(0);
+}
+
+.account {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.account a {
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.account a:hover {
+  border-bottom: 1.5px solid var(--teal);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Social sign-in                                                         */
+/* ---------------------------------------------------------------------- */
+
+.link {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+  height: auto;
+  white-space: normal;
+}
+
+.link::before {
+  content: "";
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 30px;
+  color: #a8a39a;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.link .face,
+.link .goog {
+  max-width: none;
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-top: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.link .face:hover,
+.link .goog:hover {
+  border-color: var(--teal);
+  background: var(--cream-soft);
+}
+
+.link .face img,
+.link .goog img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  position: static !important;
+}
+
+/* ---------------------------------------------------------------------- */
+/* OTP inputs                                                             */
+/* ---------------------------------------------------------------------- */
+
+.massege {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.massege .lab-inp {
+  flex: 1;
+}
+
+.massege input {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--teal);
+  padding: 16px 0;
+}
+
+.reset_code {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: black;
+}
+
+.reset_code span {
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.reset_code a {
+margin-left:21px ;
+  color: var(--teal);
+  font-weight: 700;
+  display: none;
+  transition: opacity .2s ease;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Responsive                                                             */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 980px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-panel {
+    padding: 32px 28px;
+    min-height: 260px;
+  }
+
+  .brand-illustration {
+    display: none;
+  }
+
+  .brand-copy h1 {
+    font-size: 22px;
+  }
+
+  .form-panel {
+    padding: 36px 22px 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .massege {
+    gap: 8px;
+  }
+
+  .massege input {
+    font-size: 18px;
+    padding: 13px 0;
+  }
+
+  .brand-trust {
+    gap: 14px;
+  }
+}
