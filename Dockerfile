@@ -8,7 +8,7 @@
 # =============================================================================
 
 # ---------- Stage 1: front-end assets ----------
-FROM node:22-alpine AS assets
+FROM node:25-alpine AS assets
 WORKDIR /app
 
 # Install JS dependencies first (better layer caching)
