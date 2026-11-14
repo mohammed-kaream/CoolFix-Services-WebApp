@@ -13,6 +13,15 @@ dashboard to manage accounts (block / unblock, promote, mark top technicians, im
 The whole application is containerised, so any developer can run it with **one command** — no PHP,
 Composer, Node.js or MySQL installation needed.
 
+> ### 🔑 Demo access (no setup needed)
+> On the first start the container **automatically seeds demo data**, including an admin account:
+>
+> | Role  | Email                | Password      |
+> |-------|----------------------|---------------|
+> | Admin | `admin@coolfix.test` | `password123` |
+>
+> You can also open the public pages directly (e.g. `/index`), click **"Continue as guest"** on the login page, or register a new account.
+
 ---
 
 ## Features
