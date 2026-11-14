@@ -176,6 +176,16 @@ No `.env` file is needed to run with Docker — all values are passed as environ
 5. **Register** a new account at http://localhost:8000/register and edit it from the profile page.
 6. **Contact form** — submit a message on `/contact`; it is saved and shown on the confirmation page.
 
+## Troubleshooting
+
+| Problem | Cause | Fix |
+|---|---|---|
+| `port is already allocated` | Something else uses port 8000 | Stop it, or run `APP_PORT=8001 docker compose up -d` |
+| Container stays `(unhealthy)` | `/health` returns an error | `docker compose logs app --tail 60` and look for `ERROR` |
+| Code changes don't show up | The image is a snapshot from build time | `docker compose up -d --build` |
+| `Connection refused` to the database | MySQL is still starting | Wait ~30 s; the app waits for the `db` healthcheck |
+| `exec entrypoint.sh: no such file or directory` | Windows CRLF line endings | `.gitattributes` forces LF; re-clone the repo |
+
 ## Continuous Integration
 
 Every push and pull request to `main` runs [`.github/workflows/docker-build.yml`](.github/workflows/docker-build.yml), which:
