@@ -36,7 +36,7 @@ RUN composer dump-autoload --optimize --no-scripts
 
 
 # ---------- Stage 3: runtime ----------
-FROM php:8.4-apache AS runtime
+FROM php:8.5-apache AS runtime
 
 LABEL org.opencontainers.image.title="CoolFix Services WebApp" \
       org.opencontainers.image.description="Laravel home-services platform running on PHP 8.4 + Apache" \
